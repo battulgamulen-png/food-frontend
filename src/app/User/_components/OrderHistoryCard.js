@@ -13,8 +13,8 @@ export default function OrderHistoryCard({ order, foods = [] }) {
             order.status === "pending"
               ? "border-[#EF4444]"
               : order.status === "delivered"
-              ? "border-[#18BA51]"
-              : "border-gray-300"
+                ? "border-[#18BA51]"
+                : "border-gray-300"
           }`}
         >
           {order.status}
@@ -23,7 +23,7 @@ export default function OrderHistoryCard({ order, foods = [] }) {
       <div className="flex flex-col gap-[10px]">
         {order.FoodOrderItems.map((item, index) => {
           const currentFood = foods.find(
-            (food) => food._id === item?.food?._id
+            (food) => food._id === item?.food?._id,
           );
           return (
             <div className="flex justify-between" key={index}>

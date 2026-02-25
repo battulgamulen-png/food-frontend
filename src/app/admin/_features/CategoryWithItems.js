@@ -38,6 +38,7 @@ export default function CategoryWithItems() {
             <AddNewFoodCard
               categoryId={item._id}
               categoryName={item.categoryName}
+              onSuccess={getData}
             />
             {item.foods.map((food) => (
               <AdminFoodCard

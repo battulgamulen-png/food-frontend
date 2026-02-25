@@ -9,10 +9,42 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { BACK_END_URL } from "@/app/_constants";
 
-export default function AddNewFoodCard({ categoryId, categoryName }) {
+export default function AddNewFoodCard({ categoryId, categoryName, onSuccess }) {
   const [open, setOpen] = useState(false);
   const [preview, setPreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSeeding, setIsSeeding] = useState(false);
+
+  const sampleDishes = [
+    {
+      foodName: "Chicken Burger",
+      foodPrice: "18500",
+      foodIngredients: "Crispy chicken, cheddar cheese, tomato, lettuce",
+      foodImage:
+        "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      foodName: "Pepperoni Pizza",
+      foodPrice: "32900",
+      foodIngredients: "Pepperoni, mozzarella, tomato sauce, oregano",
+      foodImage:
+        "https://images.unsplash.com/photo-1548365328-9f547fb0953b?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      foodName: "Beef Ramen",
+      foodPrice: "24900",
+      foodIngredients: "Noodles, beef slices, egg, spring onion",
+      foodImage:
+        "https://images.unsplash.com/photo-1557872943-16a5ac26437e?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      foodName: "Caesar Salad",
+      foodPrice: "15900",
+      foodIngredients: "Romaine, parmesan, chicken, croutons",
+      foodImage:
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80",
+    },
+  ];
 
   const foodSchema = Yup.object().shape({
     foodName: Yup.string().required("Food Name Required!"),
@@ -62,10 +94,29 @@ export default function AddNewFoodCard({ categoryId, categoryName }) {
       setOpen(false);
       setPreview(null);
       setIsLoading(false);
+      onSuccess?.();
     } catch (err) {
       console.error(err);
       toast.error("hool nemehed aldaa garlaa , dahin oroldono uu");
       setIsLoading(false);
+    }
+  };
+
+  const seedSampleDishes = async () => {
+    try {
+      setIsSeeding(true);
+      await Promise.all(
+        sampleDishes.map((dish) =>
+          axios.post(`${BACK_END_URL}/food`, { ...dish, category: categoryId })
+        )
+      );
+      toast.success("Sample dishes amjilttai nemegdlee");
+      onSuccess?.();
+    } catch (err) {
+      console.error(err);
+      toast.error("Sample dish nemehed aldaa garlaa");
+    } finally {
+      setIsSeeding(false);
     }
   };
 
@@ -80,6 +131,14 @@ export default function AddNewFoodCard({ categoryId, categoryName }) {
       <div className="text-[14px] max-w-[154px] text-center">
         Add new Dish to <p>{categoryName}</p>
       </div>
+      <button
+        type="button"
+        disabled={isSeeding}
+        onClick={seedSampleDishes}
+        className="cursor-pointer text-[12px] px-3 py-1.5 border rounded-md border-[#E4E4E7]"
+      >
+        {isSeeding ? "Adding..." : "Add sample menu"}
+      </button>
 
       {open && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
